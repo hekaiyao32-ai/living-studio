@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta name="artwork-release" content="camera-top-05dfb3cb348e">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Eastern mood — He Kaiyao</title>
+<meta name="description" content="Eastern mood — an interactive p5.js work by He Kaiyao. 默认舒缓万花筒隧道，可选隧道静止或原速穿梭；张手绽放光波与碎片星河，握拳复原，伸指换风格，随手留下流光拖尾。">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<script src="/eastern-mood/vendor/p5.min.js"></script>
+
+<style>
+html, body { margin: 0; padding: 0; background: #101017; font-family: system-ui, sans-serif; }
+canvas { display: block; }
+[hidden] { display: none !important; }
+#gesture-panel { position: fixed; left: 18px; top: 18px; z-index: 10; color: #f5f5f8; background: rgba(14,14,23,.87); border: 1px solid #ffffff30; border-radius: 14px; padding: 16px; width: min(350px, calc(100vw - 68px)); box-shadow: 0 12px 48px #0004; font-size: 12px; max-height: calc(100vh - 70px); overflow: auto; }
+.panel-top { display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; }
+#fx-state { color: #8be8d1; }
+p { line-height: 1.6; margin: 10px 0; }
+.actions, .labels { display: flex; gap: 8px; }
+button { cursor: pointer; color: #fff; border: 1px solid #ffffff35; background: #ffffff12; border-radius: 7px; padding: 8px 10px; font: inherit; }
+button:hover { background: #ffffff28; }
+button:disabled { cursor: default; opacity: .65; }
+summary { cursor: pointer; margin: 14px 0 8px; }
+label { display: block; flex: 1; min-width: 0; color: #ccc; }
+input, select { box-sizing: border-box; display: block; width: 100%; border: 1px solid #ffffff30; border-radius: 5px; padding: 8px; margin: 5px 0 10px; color: #fff; background: #090910; font: inherit; }
+#custom-model-settings a { color: #8be8d1; text-decoration: underline; }
+.camera-preview.custom-preview { aspect-ratio: 1; object-fit: cover; }
+#camera-start { width: 100%; background: #28665b; margin-top: 12px; padding: 11px 12px; font-size: 14px; }
+.note, #camera-status { color: #b9b9ca; line-height: 1.6; }
+#camera-status { margin-top: 10px; overflow-wrap: anywhere; }
+.camera-preview { position: fixed; right: 18px; bottom: 18px; width: 160px; border-radius: 9px; transform: scaleX(-1); z-index: 9; border: 1px solid #ffffff50; }
+
+
+.work-nav { position: fixed; inset: 0 0 auto; z-index: 20; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 18px; color: #f5f5f0; background: #101017e8; border-bottom: 1px solid #ffffff30; font-size: 12px; }
+.work-nav a { color: inherit; text-decoration: none; padding: 8px 0; }
+.work-nav a:hover { text-decoration: underline; }
+.work-nav strong { letter-spacing: .08em; font-weight: 500; }
+#gesture-panel { top: 78px; max-height: calc(100dvh - 126px); }
+.actions { flex-wrap: wrap; }
+button:focus-visible, a:focus-visible, summary:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid #8be8d1; outline-offset: 3px; }
+#fx-state { display: block; min-height: 18px; }
+#load-status { position: fixed; bottom: 18px; left: 18px; z-index: 8; color: white; background: #101017ed; padding: 12px; max-width: calc(100vw - 60px); }
+#load-status[hidden] { display: none; }
+@media(max-width: 540px) { .work-nav { padding: 10px 12px; gap: 8px; font-size: 10px; } .work-nav strong { display: none; } #gesture-panel { left: 12px; top: 64px; width: min(320px,calc(100vw - 58px)); padding: 16px; max-height: calc(100dvh - 110px); } .camera-preview { width: 112px; right: 12px; bottom: 12px; } }
+
+.gesture-guide { margin: 14px 0; border-top: 1px solid #ffffff25; border-bottom: 1px solid #ffffff25; padding: 12px 0; }
+.gesture-guide h2 { margin: 0 0 8px; font-size: 16px; font-weight: 650; color: #fff; }
+.gesture-guide-intro { color: #d4d4df; margin: 0 0 10px; }
+.gesture-guide-list { margin: 0; }
+.gesture-guide-list > div { display: grid; grid-template-columns: 88px minmax(0,1fr); gap: 10px; padding: 10px 0; border-top: 1px solid #ffffff18; }
+.gesture-guide-list dt { color: #8be8d1; font-weight: 650; line-height: 1.7; }
+.gesture-guide-list dd { margin: 0; color: #f0f0f5; line-height: 1.7; overflow-wrap: anywhere; }
+.gesture-guide-manual { margin-bottom: 0; }
+@media(max-width: 360px) { .gesture-guide-list > div { grid-template-columns: 1fr; gap: 3px; } }
+
+.viewing-controls { margin: 12px 0; padding: 12px; border: 1px solid #8be8d15c; border-radius: 8px; background: #8be8d10a; }
+.viewing-controls label { color: #f5f5f8; font-size: 14px; font-weight: 600; }
+.viewing-controls select { margin-bottom: 8px; font-weight: 400; }
+.viewing-controls p { margin: 0; font-size: 12px; }
+
+.light-switch { display: flex; align-items: center; gap: 9px; margin: 12px 0 6px; color: #d8fff4; cursor: pointer; line-height: 1.5; }
+.light-switch input { display: inline-block; flex: 0 0 auto; width: 17px; height: 17px; padding: 0; margin: 0; accent-color: #8be8d1; }
+.light-help { margin: 6px 0 12px; }
+</style></head><body><nav class="work-nav" aria-label="作品导航"><a href="/project-title" target="_top">← 返回作品列表 / Archive</a><strong>EASTERN MOOD · HE KAIYAO</strong><button id="panel-toggle" aria-controls="gesture-panel" aria-expanded="true">收起控制 H</button></nav><main aria-label="Eastern mood 互动作品"></main>
+<noscript><p style="color:white;margin:90px 18px">请启用 JavaScript 运行作品。<a href="/project-title" target="_top">返回作品列表</a></p></noscript>
+<script src="/eastern-mood/assets/sketch-05dfb3cb348e.js"></script>
+</body></html>

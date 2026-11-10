@@ -1,0 +1,5 @@
+/eastern-mood/vendor/mediapipe/wasm/*.wasm
+  Content-Type: application/wasm
+
+/*
+  Permissions-Policy: camera=(self)

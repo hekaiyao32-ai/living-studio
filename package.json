@@ -1,0 +1,15 @@
+{
+  "name": "he-kaiyao-living-studio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static Living Studio archive and Eastern mood interactive artwork",
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/serve.mjs",
+    "build": "node scripts/verify-site.mjs",
+    "check:live": "node scripts/check-published.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

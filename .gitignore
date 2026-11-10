@@ -1,0 +1,12 @@
+node_modules/
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.DS_Store
+Thumbs.db
+.wrangler/
+.openai/
+*.log
+# dist/ is the maintained static website; keep it tracked.
